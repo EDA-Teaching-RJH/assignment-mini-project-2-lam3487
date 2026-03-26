@@ -7,7 +7,8 @@ class Game:
         self.Deck = []
         self.Deck = Deck()
         deck = self.Deck.CreateDeck()
-        print(deck)
+        for n, card in enumerate(deck):
+            print(deck[n])
         
 class Deck:
     Suits = ["Hearts", "Diamonds", "Spades", "Clubs"]
@@ -29,6 +30,9 @@ class Card:
     def __init__(self, Suit, Value):
         self.Suit = Suit
         self.Value = Value
+    
+    def __str__(self):
+        return str(f"{self.Value} of {self.Suit}")
     
 def main():
     game = Game()
