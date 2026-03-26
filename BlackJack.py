@@ -20,6 +20,15 @@ class Game:
                 break
             self.playerBet = player.Bet()
             self.Deal()
+            print("the dealers cards are ")
+            dealer.ShowHand()
+            print("\nyour cards are ")
+            player.ShowHand()
+            self.Choice(player)
+            player.CheckIfBust(player)
+            if player.IsBust == False:
+                print("test")
+
 
     def Deal(self):
         for i in range(2):
@@ -29,7 +38,31 @@ class Game:
         return(player.Hand)
             
     def Hit(self, player):
-        print("s")
+        card = self.Deck.Cards.pop()
+        player.Hand.append(card)
+        print("\nyour cards are ")
+        player.ShowHand()
+
+    
+    def Choice(self, player):
+        choice = input("would you like to hit or stand? H/S ")
+        if choice.upper() == "H":
+            self.Hit(player)
+        if choice.upper() == "S":
+            print("test")
+
+    def CheckIfBust(self, player):
+        if player(Human).IsBust() == True:
+            print("you've gone bust")
+            self.Lose()
+        if player(Dealer).IsBust() == True:
+            print("you've won this time")
+            player.chips == player.chips + (player.chips * 2)
+            print(f"you now have {player.chips} chips")
+            self.playerBet = 0
+    
+    def Lose(self):
+        print("The house has won")
 
     def DeckTest(self):
         self.Deck = []
@@ -54,6 +87,8 @@ class Game:
     def IsBust(self):
         if self.GetHandScore > 21:
             return True
+        else:
+            return False
     
         
 class Deck:
@@ -97,13 +132,29 @@ class Player:
 
     def GetHandScore(self):
         HandScore = 0
+        CardScore = Card(Suit, Value)
         for i in range(len(self.Hand)):
-            HandScore = HandScore + self.GetCardScore()
+            HandScore = HandScore + self.CardScore.GetCardScore()
     
     def ShowHand(self):
         for n, card in enumerate(self.Hand):
             print(str(self.Hand[n]))
     
+    def IsBust(self):
+        if self.GetHandScore() >= 21:
+            return True
+        else:
+            return False
+    
+    def CheckIfBust(self, player):
+        if player.IsBust() == True:
+            print("you've gone bust")
+            self.Lose()
+        if player.IsBust() == True:
+            print("you've won this time")
+            player.chips == player.chips + (player.chips * 2)
+            print(f"you now have {player.chips} chips")
+            self.playerBet = 0
     
 
 class Human(Player):
