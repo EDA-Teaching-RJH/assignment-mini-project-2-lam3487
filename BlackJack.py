@@ -2,15 +2,24 @@ import random
 
 class Game:
     def __init__(self):
-        player = Human()
-        dealer = Dealer()
-        self.players = [player, dealer]
+        self.players = []
         self.Deck = []
 
     def PlayGame(self):
         self.Deck = Deck()
         self.Deck.CreateDeck()
         self.Deck.ShuffleDeck()
+        player = Human(100)
+        dealer = Dealer()
+        self.players = [player, dealer]
+        self.Deck.CreateDeck()
+        self.Deck.ShuffleDeck()
+        while True:
+            if self.players[0].chips == 0:
+                print("you have no more chips to play with")
+                break
+            self.playerBet = player.Bet()
+            self.Deal()
 
     def Deal(self):
         for i in range(2):
@@ -41,6 +50,10 @@ class Game:
         hand = self.Deal()
         for n, card in enumerate(hand):
             print(hand[n])
+        
+    def IsBust(self):
+        if self.GetHandScore > 21:
+            return True
     
         
 class Deck:
@@ -82,16 +95,31 @@ class Player:
     def __init__(self):
         self.Hand = []
 
-
     def GetHandScore(self):
         HandScore = 0
         for i in range(len(self.Hand)):
             HandScore = HandScore + self.GetCardScore()
+    
+    def ShowHand(self):
+        for n, card in enumerate(self.Hand):
+            print(str(self.Hand[n]))
+    
+    
 
 class Human(Player):
-    def __init__(self):
+    def __init__(self, chips):
         super().__init__()
         self.Hand = []
+        self.chips = chips
+    
+    def Bet(self):
+        bet = int(input(f"you have {self.chips} chips how many would you like to bet?"))
+        if bet > 0 and bet <= self.chips:
+            self.chips = self.chips - bet
+            return bet
+        else:
+            print("you are unable to bet this many chips, please try again")
+            self.Bet()
 
 class Dealer(Player):
     def __init__(self):
@@ -99,7 +127,7 @@ class Dealer(Player):
 
 def main():
     game = Game()
-    game.DealTest()
+    game.PlayGame()
 
 
 
