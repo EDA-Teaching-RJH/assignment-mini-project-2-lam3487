@@ -22,10 +22,11 @@ class Game:
             self.Deal()
             print("the dealers cards are ")
             dealer.ShowHand()
+            dealer.GetHandScore
             print("\nyour cards are ")
             player.ShowHand()
+            player.GetHandScore
             self.Choice(player)
-            player.CheckIfBust(player)
             if player.IsBust == False:
                 print("test")
 
@@ -42,6 +43,7 @@ class Game:
         player.Hand.append(card)
         print("\nyour cards are ")
         player.ShowHand()
+        self.CheckIfBust(player)
 
     
     def Choice(self, player):
@@ -52,15 +54,16 @@ class Game:
             print("test")
 
     def CheckIfBust(self, player):
-        if player(Human).IsBust() == True:
-            print("you've gone bust")
-            self.Lose()
-        if player(Dealer).IsBust() == True:
-            print("you've won this time")
-            player.chips == player.chips + (player.chips * 2)
-            print(f"you now have {player.chips} chips")
-            self.playerBet = 0
-    
+        if player.IsBust:
+            if isinstance(player, Human):
+                print("you've gone bust")
+                self.Lose()
+            if isinstance(player, Dealer):
+                print("you've won this time")
+                player.chips == player.chips + (player.chips * 2)
+                print(f"you now have {player.chips} chips")
+                self.playerBet = 0
+
     def Lose(self):
         print("The house has won")
 
@@ -84,11 +87,6 @@ class Game:
         for n, card in enumerate(hand):
             print(hand[n])
         
-    def IsBust(self):
-        if self.GetHandScore > 21:
-            return True
-        else:
-            return False
     
         
 class Deck:
@@ -118,11 +116,12 @@ class Card:
     def __str__(self):
         return str(f"{self.Value} of {self.Suit}")
 
+    @property
     def GetCardScore(self):
         if self.Value == "jack" or self.Value == "queen" or self.Value == "king":
             return 10
         if self.Value in ["2", "3", "4", "5", "6", "7", "8", "9", "10"]:
-            return(self.Value)
+            return int(self.Value)
         if self.Value == "ace":
             return 1
         
@@ -130,31 +129,22 @@ class Player:
     def __init__(self):
         self.Hand = []
 
+    @property
     def GetHandScore(self):
         HandScore = 0
-        CardScore = Card(Suit, Value)
-        for i in range(len(self.Hand)):
-            HandScore = HandScore + self.CardScore.GetCardScore()
+        for i, card in enumerate(self.Hand):
+            HandScore = HandScore + card.GetCardScore
+        print(f"the card total is: {HandScore}")
+        return HandScore
     
     def ShowHand(self):
         for n, card in enumerate(self.Hand):
             print(str(self.Hand[n]))
     
+    @property
     def IsBust(self):
-        if self.GetHandScore() >= 21:
+        if self.GetHandScore > 21:
             return True
-        else:
-            return False
-    
-    def CheckIfBust(self, player):
-        if player.IsBust() == True:
-            print("you've gone bust")
-            self.Lose()
-        if player.IsBust() == True:
-            print("you've won this time")
-            player.chips == player.chips + (player.chips * 2)
-            print(f"you now have {player.chips} chips")
-            self.playerBet = 0
     
 
 class Human(Player):
@@ -174,6 +164,7 @@ class Human(Player):
 
 class Dealer(Player):
     def __init__(self):
+        super().__init__()
         self.Hand = []
 
 def main():
