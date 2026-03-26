@@ -2,21 +2,23 @@ import random
 
 class Game:
     def __init__(self):
-        self.players = []
+        player = Human()
+        dealer = Dealer()
+        self.players = [player, dealer]
         self.Deck = []
 
     def PlayGame(self):
         self.Deck = Deck()
         self.Deck.CreateDeck()
         self.Deck.ShuffleDeck()
-        self.Hand = self.Deal()
 
     def Deal(self):
         for i in range(2):
             for player in self.players:
-                cards = self.Deck.Cards.pop()
+                cards = self.Deck.Cards.pop(1)
                 player.Hand.append(cards)
-    
+        return(player.Hand)
+            
     def Hit(self, player):
         print("s")
 
@@ -28,15 +30,18 @@ class Game:
         for n, card in enumerate(deck):
             print(deck[n])
         
-
     def DealTest(self):
         self.Deck = []
         self.Deck = Deck()
+        player = Human()
+        self.Hand = []
+        self.Hand = Game()
         deck = self.Deck.CreateDeck()
         deck = self.Deck.ShuffleDeck()
-        self.Hand = []
         hand = self.Deal()
-        print(hand)
+        for n, card in enumerate(hand):
+            print(hand[n])
+    
         
 class Deck:
     Suits = ["Hearts", "Diamonds", "Spades", "Clubs"]
@@ -52,7 +57,6 @@ class Deck:
         for Suit in self.Suits:
             for Value in self.Values:
                 self.Cards.append(Card(Suit, Value))
-        return(self.Cards)
      
     def ShuffleDeck(self):
         random.shuffle(self.Cards)
@@ -78,17 +82,25 @@ class Player:
     def __init__(self):
         self.Hand = []
 
+
     def GetHandScore(self):
         HandScore = 0
         for i in range(len(self.Hand)):
             HandScore = HandScore + self.GetCardScore()
 
 class Human(Player):
+    def __init__(self):
+        super().__init__()
+        self.Hand = []
 
 class Dealer(Player):
+    def __init__(self):
+        self.Hand = []
 
 def main():
     game = Game()
     game.DealTest()
+
+
 
 main()
