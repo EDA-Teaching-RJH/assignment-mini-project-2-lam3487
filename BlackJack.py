@@ -4,6 +4,7 @@ class Game:
     def __init__(self):
         self.players = []
         self.Deck = []
+        self.PlayerTurn = True
 
     def PlayGame(self):
         self.Deck = Deck()
@@ -11,25 +12,43 @@ class Game:
         self.Deck.ShuffleDeck()
         player = Human(100)
         dealer = Dealer()
+        Active = True
+        PlayerTurn = False
         self.players = [player, dealer]
         self.Deck.CreateDeck()
         self.Deck.ShuffleDeck()
-        while True:
-            if self.players[0].chips == 0:
+        while Active == True:
+            if player.chips == 0:
                 print("you have no more chips to play with")
                 break
-            self.playerBet = player.Bet()
+            self.playerBet = Human.Bet(player)
             self.Deal()
             print("the dealers cards are ")
-            dealer.ShowHand()
-            dealer.GetHandScore
+            dealer.RevealHand()
             print("\nyour cards are ")
-            player.ShowHand()
+            player.ShowHand(player)
             player.GetHandScore
             self.Choice(player)
-            if player.IsBust == False:
-                print("test")
+            if not player.IsBust:
+                print("\nthe dealers cards are: ")
+                dealer.ShowHand(player)
+                while PlayerTurn == False:
+                    if dealer.GetHandScore < 17:
+                        print("\nthe dealer hits")
+                        self.Hit(dealer)
+                        PlayerTurn = True
+                    if dealer.GetHandScore > 17 and not dealer.IsBust:
+                        print("\nthe dealer stands")
+                        PlayerTurn = True
+                self.Compare(player, dealer)
+                Again = self.PlayAgain()
+                if Again:
+                    Active = False
+                else:
+                    self.ResetPlayers()
+                    PlayerTurn = True
 
+            
 
     def Deal(self):
         for i in range(2):
@@ -41,8 +60,8 @@ class Game:
     def Hit(self, player):
         card = self.Deck.Cards.pop()
         player.Hand.append(card)
-        print("\nyour cards are ")
-        player.ShowHand()
+        print(f"\nthe cards are ")
+        player.ShowHand(player)
         self.CheckIfBust(player)
 
     
@@ -51,43 +70,47 @@ class Game:
         if choice.upper() == "H":
             self.Hit(player)
         if choice.upper() == "S":
-            print("test")
+            print(f"you have decide to stand with a total of {player.GetHandScore}")
 
     def CheckIfBust(self, player):
-        if player.IsBust:
+        if player.IsBust == True:
             if isinstance(player, Human):
-                print("you've gone bust")
+                print("\nyou've gone bust")
                 self.Lose()
             if isinstance(player, Dealer):
-                print("you've won this time")
-                player.chips == player.chips + (player.chips * 2)
-                print(f"you now have {player.chips} chips")
-                self.playerBet = 0
+                print("the dealer has gone bust")
+                self.Win(Human)
+            else:
+                print("its a Draw")
 
     def Lose(self):
         print("The house has won")
+        
+    def Win(self, player):
+        print("you've won this time")
+        player.chips += 2 * self.playerBet
+        self.playerBet = 0
+        
 
-    def DeckTest(self):
-        self.Deck = []
-        self.Deck = Deck()
-        deck = self.Deck.CreateDeck()
-        deck = self.Deck.ShuffleDeck()
-        for n, card in enumerate(deck):
-            print(deck[n])
+    def Compare(self, player, dealer):
+        if player.GetHandScore > dealer.GetHandScore:
+            self.Win(player)
+        if player.GetHandScore < dealer.GetHandScore:
+            self.Lose()
+        else:
+            ("its a draw")
         
-    def DealTest(self):
-        self.Deck = []
-        self.Deck = Deck()
-        player = Human()
-        self.Hand = []
-        self.Hand = Game()
-        deck = self.Deck.CreateDeck()
-        deck = self.Deck.ShuffleDeck()
-        hand = self.Deal()
-        for n, card in enumerate(hand):
-            print(hand[n])
-        
+    def PlayAgain(self):
+        Again = input("\ndo you want to play again? Y/N ")
+        if Again.upper == "Y":
+            return True
+        if Again.upper == "N":
+            return False
     
+    def ResetPlayers(self):
+        for player in self.players:
+            player.reset()
+        self.playerBet = 0
         
 class Deck:
     Suits = ["Hearts", "Diamonds", "Spades", "Clubs"]
@@ -134,23 +157,23 @@ class Player:
         HandScore = 0
         for i, card in enumerate(self.Hand):
             HandScore = HandScore + card.GetCardScore
-        print(f"the card total is: {HandScore}")
         return HandScore
     
-    def ShowHand(self):
-        for n, card in enumerate(self.Hand):
-            print(str(self.Hand[n]))
+    def ShowHand(self, player):
+            for n, card in enumerate(self.Hand):
+                print(self.Hand[n])
     
     @property
     def IsBust(self):
         if self.GetHandScore > 21:
             return True
     
+    def reset(self):
+        self.Hand = []
 
 class Human(Player):
     def __init__(self, chips):
         super().__init__()
-        self.Hand = []
         self.chips = chips
     
     def Bet(self):
@@ -166,6 +189,10 @@ class Dealer(Player):
     def __init__(self):
         super().__init__()
         self.Hand = []
+    
+    def RevealHand(self):
+        print("?")
+        print(str(self.Hand[1]))
 
 def main():
     game = Game()
