@@ -186,11 +186,12 @@ class Human(Player):
         self.chips = chips
     
     def Bet(self):
-        bet = int(input(f"you have {self.chips} chips how many would you like to bet?"))
-        if bet > 0 and bet <= self.chips:
-            self.chips = self.chips - bet
-            return bet
-        else:
+        bet = input(f"you have {self.chips} chips how many would you like to bet?")
+        try:
+            if int(bet) > 0 and int(bet) <= self.chips:
+                self.chips = self.chips - bet
+                return int(bet)
+        except ValueError:
             print("you are unable to bet this many chips, please try again")
             self.Bet()
 
