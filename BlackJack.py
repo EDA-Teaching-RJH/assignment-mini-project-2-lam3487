@@ -1,5 +1,6 @@
 import random
 
+
 class Game:
     def __init__(self):
         self.players = []
@@ -67,10 +68,14 @@ class Game:
     
     def Choice(self, player):
         choice = input("would you like to hit or stand? H/S ")
-        if choice.upper() == "H":
-            self.Hit(player)
-        if choice.upper() == "S":
-            print(f"you have decide to stand with a total of {player.GetHandScore}")
+        try:
+            if choice.upper() == "H":
+                self.Hit(player)
+            if choice.upper() == "S":
+                print(f"you have decide to stand with a total of {player.GetHandScore}")
+        except ValueError:
+            print("try again ")
+            self.Choice(player)
 
     def CheckIfBust(self, player):
         if player.IsBust == True:
@@ -87,10 +92,10 @@ class Game:
         print("The house has won")
         
     def Win(self, player):
-        print("you've won this time")
+        print("\ncongrats, you've won")
         player.chips += 2 * self.playerBet
         self.playerBet = 0
-        
+        print(f"you now have {player.chips} chips")
 
     def Compare(self, player, dealer):
         if player.GetHandScore > dealer.GetHandScore:
@@ -102,10 +107,14 @@ class Game:
         
     def PlayAgain(self):
         Again = input("\ndo you want to play again? Y/N ")
-        if Again.upper == "Y":
-            return True
-        if Again.upper == "N":
-            return False
+        try:
+            if Again.upper == "Y":
+                return True
+            if Again.upper == "N":
+                return False
+        except ValueError:
+            print("try again")
+            self.PlayAgain()
     
     def ResetPlayers(self):
         for player in self.players:
